@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مكتبة الطلبة</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="https://media-hbe1-1.cdn.whatsapp.net/v/t61.24694-24/112813290_156783879306488_4264175809875545725_n.jpg?ccb=11-4&oh=01_Q5AaIEz41wHtPhkSj06u6Y8o0xnszLrqkBy4OY-fbbp5pj3c&oe=677D5C0C&_nc_sid=5e03e0&_nc_cat=105" alt="Logo" class="logo">
+      <h1 class="title">
+        مكتبة الطلبة لتجارة الأدوات المكتبية
+        <span>- فرع السبعين -</span>
+      </h1>
+    </div>
+  </header>
+
+  <main>
+    <!-- Chat Section -->
+    <section id="chat-section">
+      <h2>تواصل معنا</h2>
+      <div id="chat-box">
+        <!-- رسالة مع النص "كيف يمكنني مساعدتك؟" -->
+        <div class="message">
+          <p class="sender">أنت</p>
+          <p class="message-text">كيف يمكنني مساعدتك؟</p>
+          <div class="message-actions">
+            <button class="edit-btn">تعديل</button>
+            <button class="delete-btn">مسح</button>
+          </div>
+        </div>
+      </div>
+      <div id="chat-input-container">
+        <input id="chat-input" type="text" placeholder="اكتب رسالتك...">
+        <input id="file-input" type="file" accept=".pdf" style="display: none;">
+        <button id="upload-btn" onclick="document.getElementById('file-input').click();">
+          <img src="https://w7.pngwing.com/pngs/80/373/png-transparent-share-icon-computer-icons-file-sharing-world-wide-web-trademark-logo-internet.png" alt="رفع">
+        </button>
+        <button id="send-btn">
+          <img src="https://cdn.icon-icons.com/icons2/1678/PNG/512/wondicon-ui-free-send_111204.png" alt="إرسال">
+        </button>
+      </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products-section">
+      <h2 id="products-title">أطلب الأن </h2>
+      <div id="products-container">
+        <div class="product">
+          <img src="https://sallhonline.com/sallh_media/2024/10/%D9%83%D8%B4%D9%83%D9%88%D9%841-1-300x300.png" alt="منتج 1">
+          <p>دفتر 40 ورقة - 10 جنيه</p>
+          <button class="share-btn">شارك في المحادثة</button>
+        </div>
+        <div class="product">
+          <img src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSrYO8h984ICqi4NR5zmmhYVkGhW9UPRMmIwYCEkoAcUlS972DFauYQ4zuMGYHUI79zKkcu1vcGlFIIdpZ01bs7WC6X8JBJ8sVZfiqaWKsTn2h6VEXbRA-B_mHYfnkft8bmo0TbfYk&usqp=CAc" alt="قلم روتو">
+          <p>قلم روتو - 5 جنيه</p>
+          <button class="share-btn">شارك في المحادثة</button>
+        </div>
+        <div class="product">
+          <img src="https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQDsytb07KblKN7RhuioOPLvPKRmhV8njK_P5ZR3UOsJNJVteAQi3feGsXSyNYYVX-By8WIiZw6fwmmqKc0_nSYDZIAJMBNzbvzr8urKw_CZ3dhd6IVB-AwvMI9x3IeKlXvHZysm2kIag&usqp=CAc" alt="مسطرة">
+          <p>مسطرة - 10 جنيه</p>
+          <button class="share-btn">شارك في المحادثة</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
