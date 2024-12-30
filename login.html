@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f3f3f3;
+    }
+    .container {
+      max-width: 400px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #ccc;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>تسجيل الدخول</h2>
+    <div id="step-1">
+      <input type="text" id="name" placeholder="الاسم" required />
+      <input type="tel" id="phone" placeholder="رقم الهاتف" required />
+      <input type="password" id="password" placeholder="كلمة السر" required />
+      <button id="send-code">إرسال كود التأكيد</button>
+    </div>
+    <div id="step-2" class="hidden">
+      <p>تم إرسال كود التأكيد إلى رقمك.</p>
+      <input type="text" id="confirmation-code" placeholder="أدخل كود التأكيد" required />
+      <button id="verify-code">تأكيد</button>
+    </div>
+  </div>
+
+  <script>
+    const sendCodeBtn = document.getElementById('send-code');
+    const verifyCodeBtn = document.getElementById('verify-code');
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+
+    sendCodeBtn.addEventListener('click', () => {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!name || !phone || !password) {
+        alert('يرجى تعبئة جميع الحقول');
+        return;
+      }
+
+      // إرسال البيانات للخادم لتوليد كود التأكيد
+      fetch('/api/send-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, phone, password }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            alert('تم إرسال كود التأكيد.');
+            step1.classList.add('hidden');
+            step2.classList.remove('hidden');
+          } else {
+            alert(data.message || 'حدث خطأ، حاول مرة أخرى.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    });
+
+    verifyCodeBtn.addEventListener('click', () => {
+      const code = document.getElementById('confirmation-code').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      if (!code) {
+        alert('يرجى إدخال كود التأكيد.');
+        return;
+      }
+
+      // التحقق من الكود مع الخادم
+      fetch('/api/verify-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone, code }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            alert('تم التسجيل بنجاح.');
+            window.location.href = '/index.html'; // نقل المستخدم إلى الصفحة الرئيسية
+          } else {
+            alert(data.message || 'كود التأكيد غير صحيح.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    });
+  </script>
+</body>
+</html>

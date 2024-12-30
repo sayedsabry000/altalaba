@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة الدردشة</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>لوحة إدارة مكتبة الطلبة</h1>
+  </header>
+  <main>
+    <!-- قسم الرسائل النشطة -->
+    <section id="active-users-section">
+      <h2>المستخدمين النشطين</h2>
+      <ul id="active-users-list"></ul>
+    </section>
+
+    <!-- قسم الدردشة -->
+    <section id="chat-section">
+      <h2>تواصل معنا</h2>
+      <div id="chat-box">
+        <!-- رسالة مع النص "كيف يمكنني مساعدتك؟" -->
+        <div class="message">
+          <p class="sender">أنت</p>
+          <p class="message-text">كيف يمكنني مساعدتك؟</p>
+          <div class="message-actions">
+            <button class="edit-btn">تعديل</button>
+            <button class="delete-btn">مسح</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- المدخلات لإرسال الرسائل والملفات -->
+      <div id="chat-input-container">
+        <input id="chat-input" type="text" placeholder="اكتب رسالتك...">
+        <input id="file-input" type="file" accept=".pdf" style="display: none;">
+        <button id="upload-btn" onclick="document.getElementById('file-input').click();">
+          <img src="https://w7.pngwing.com/pngs/80/373/png-transparent-share-icon-computer-icons-file-sharing-world-wide-web-trademark-logo-internet.png" alt="رفع">
+        </button>
+        <button id="send-btn">
+          <img src="https://cdn.icon-icons.com/icons2/1678/PNG/512/wondicon-ui-free-send_111204.png" alt="إرسال">
+        </button>
+      </div>
+    </section>
+  </main>
+  <script src="dashboard.js"></script>
+</body>
+</html>

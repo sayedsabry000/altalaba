@@ -204,6 +204,8 @@ function deleteMessage(messageElem) {
     messageElem.remove();
   }
 }
+
+// Fetch products and display in chat
 fetch('/products')
   .then((response) => response.json())
   .then((products) => {
