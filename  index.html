@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1e3a8a">
+<title>بوابة الموظف — نظام الحضور</title>
+<style>
+:root{
+  --primary:#1e3a8a; --primary-light:#3b5bdb;
+  --success:#059669; --danger:#dc2626; --warning:#d97706;
+  --bg:#f1f5f9; --card:#fff; --text:#0f172a; --muted:#64748b;
+  --border:#e2e8f0; --radius:16px;
+  --shadow:0 4px 24px rgba(15,23,42,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',Tahoma,system-ui,sans-serif;background:linear-gradient(160deg,#eff6ff 0%,#f8fafc 100%);color:var(--text);min-height:100vh;line-height:1.6;padding:16px;padding-bottom:32px;}
+.container{max-width:480px;margin:0 auto}
+.hidden{display:none!important}
+
+/* Auth Screens */
+.auth-screen{min-height:80vh;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.auth-card{background:var(--card);border-radius:20px;padding:30px 24px;box-shadow:var(--shadow);width:100%;max-width:400px;animation:slideUp .4s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.auth-card h2{text-align:center;color:var(--primary);margin-bottom:8px;font-size:22px}
+.auth-card p{text-align:center;color:var(--muted);font-size:13px;margin-bottom:24px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#334155}
+.form-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;transition:border-color .2s;background:#f8fafc;}
+.form-group input:focus{outline:none;border-color:var(--primary-light);background:#fff;}
+.btn-main{width:100%;padding:14px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;box-shadow:0 8px 20px rgba(30,58,138,.25);}
+.btn-main:active{transform:scale(.97)}
+.toggle-auth{text-align:center;font-size:13px;margin-top:16px;color:var(--muted)}
+.toggle-auth a{color:var(--primary);font-weight:600;text-decoration:none;cursor:pointer}
+
+/* Main UI */
+.demo-banner{background:#fef3c7;color:#92400e;padding:10px 14px;border-radius:12px;font-size:12px;margin-bottom:16px;border-right:4px solid #f59e0b;text-align:center;}
+.demo-banner.err{background:#fee2e2;color:#991b1b;border-right-color:#dc2626}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:14px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);position:relative;}
+.brand-logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;flex-shrink:0;}
+.brand-text h1{font-size:16px;font-weight:700;color:var(--primary)}
+.brand-text p{font-size:12px;color:var(--muted)}
+.logout-btn{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:#fee2e2;color:#991b1b;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;}
+
+.profile{display:flex;align-items:center;gap:14px;padding:16px;background:linear-gradient(135deg,#1e3a8a,#3b5bdb);border-radius:var(--radius);color:#fff;box-shadow:var(--shadow);margin-bottom:16px;}
+.avatar{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;flex-shrink:0;border:2px solid rgba(255,255,255,.3);}
+.profile-info h3{font-size:16px;margin-bottom:2px}
+.profile-info p{font-size:12px;opacity:.85}
+
+.card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px;}
+.card h2{font-size:16px;margin-bottom:14px;color:var(--primary)}
+
+.state-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;}
+.state-badge.in{background:#d1fae5;color:#065f46}
+.state-badge.out{background:#fee2e2;color:#991b1b}
+.state-badge.none{background:#f1f5f9;color:#475569}
+.badge-row{text-align:center;margin-bottom:16px}
+
+.status-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--shadow);text-align:center;}
+.stat-card .label{font-size:11px;color:var(--muted);margin-bottom:4px}
+.stat-card .value{font-size:15px;font-weight:700;color:var(--primary)}
+
+.geo-box{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#f8fafc;border-radius:12px;border:1.5px solid var(--border);margin-bottom:16px;font-size:13px;}
+.geo-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;background:#94a3b8;}
+.geo-dot.ok{background:#10b981;box-shadow:0 0 0 4px rgba(16,185,129,.2)}
+.geo-dot.err{background:#dc2626;box-shadow:0 0 0 4px rgba(220,38,38,.2)}
+.geo-dot.loading{background:#f59e0b;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 20px;border:none;border-radius:12px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform .1s;}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-success{background:linear-gradient(135deg,#059669,#10b981);color:#fff;}
+.btn-danger{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;}
+.btn-ghost{background:#fff;color:var(--primary);border:1.5px solid var(--border);padding:8px 14px;font-size:13px;width:auto}
+.btn-lg{padding:20px;font-size:18px;border-radius:16px;min-height:80px;flex-direction:column;gap:4px}
+.btn-lg .icon{font-size:32px}
+.actions{display:grid;gap:12px;margin-bottom:16px}
+
+.records-list{max-height:340px;overflow-y:auto;margin:0 -4px;padding:0 4px}
+.record-item{display:flex;align-items:center;gap:12px;padding:12px;background:#f8fafc;border-radius:12px;margin-bottom:8px;border-right:3px solid var(--border);}
+.record-item.in{border-right-color:#10b981}
+.record-item.out{border-right-color:#ef4444}
+.record-icon{font-size:20px;flex-shrink:0}
+.record-body{flex:1;min-width:0}
+.record-title{font-size:14px;font-weight:600}
+.record-time{font-size:12px;font-weight:600;color:var(--primary);white-space:nowrap}
+.record-extra{font-size:11px;color:var(--muted);margin-top:2px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:#0f172a;color:#fff;padding:14px 20px;border-radius:12px;font-size:14px;z-index:9999;transition:transform .35s;}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{background:#059669}
+.toast.error{background:#dc2626}
+
+.footer-link{text-align:center;padding:16px;font-size:13px}
+.footer-link a{color:var(--primary);text-decoration:none;font-weight:600}
+.empty{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="loginScreen" class="auth-screen">
+    <div class="brand" style="width:100%;margin-bottom:24px">
+      <div class="brand-logo">ح</div>
+      <div class="brand-text"><h1>نظام الحضور الذكي</h1><p>بوابة الموظف</p></div>
+    </div>
+    <div class="auth-card">
+      <h2>🔐 تسجيل الدخول</h2>
+      <p>أدخل بياناتك للبدء</p>
+      <form id="loginForm">
+        <div class="form-group"><label>رقم الموبيل</label><input id="loginPhone" type="tel" required placeholder="01xxxxxxxxx"></div>
+        <div class="form-group"><label>كلمة المرور</label><input id="loginPassword" type="password" required placeholder="••••••"></div>
+        <div id="loginError" style="color:var(--danger);font-size:13px;margin-bottom:10px;display:none"></div>
+        <button type="submit" class="btn-main">دخول →</button>
+      </form>
+      <div class="toggle-auth">ليس لديك حساب؟ <a id="showRegister">إنشاء حساب جديد</a></div>
+    </div>
+  </div>
+
+  <div id="registerScreen" class="auth-screen hidden">
+    <div class="brand" style="width:100%;margin-bottom:24px">
+      <div class="brand-logo">ح</div>
+      <div class="brand-text"><h1>نظام الحضور الذكي</h1><p>تسجيل موظف جديد</p></div>
+    </div>
+    <div class="auth-card">
+      <h2>📝 حساب جديد</h2>
+      <p>أدخل بياناتك لإنشاء الحساب</p>
+      <form id="registerForm">
+        <div class="form-group"><label>الاسم بالكامل</label><input id="regName" type="text" required placeholder="مثال: السيد صبرى"></div>
+        <div class="form-group"><label>القسم</label><input id="regDept" type="text" required placeholder="مثال: الهندسة"></div>
+        <div class="form-group"><label>المهنة</label><input id="regJob" type="text" required placeholder="مثال: مهندس مدنى"></div>
+        <div class="form-group"><label>رقم الموبيل (للدخول)</label><input id="regPhone" type="tel" required placeholder="01xxxxxxxxx"></div>
+        <div class="form-group"><label>كلمة المرور</label><input id="regPassword" type="password" required minlength="6" placeholder="6 أحرف على الأقل"></div>
+        <div id="regError" style="color:var(--danger);font-size:13px;margin-bottom:10px;display:none"></div>
+        <button type="submit" class="btn-main">إنشاء الحساب</button>
+      </form>
+      <div class="toggle-auth">لديك حساب بالفعل؟ <a id="showLogin">تسجيل الدخول</a></div>
+    </div>
+  </div>
+
+  <div id="appScreen" class="hidden">
+    <div id="connBanner" class="demo-banner">🔥 متصل بـ Firebase — <span id="connStatus">جاري الاتصال...</span></div>
+    <div class="brand">
+      <div class="brand-logo">ح</div>
+      <div class="brand-text"><h1>نظام الحضور الذكي</h1><p>بوابة الموظف</p></div>
+      <button id="logoutBtn" class="logout-btn" title="تسجيل خروج">🚪</button>
+    </div>
+
+    <div class="profile">
+      <div class="avatar" id="avatar">؟</div>
+      <div class="profile-info"><h3 id="empName">—</h3><p id="empMeta">—</p></div>
+    </div>
+
+    <div class="badge-row"><span id="stateBadge" class="state-badge none">⏳ جاري التحميل</span></div>
+
+    <div class="status-row">
+      <div class="stat-card"><div class="label">آخر حضور</div><div class="value" id="lastIn">—</div></div>
+      <div class="stat-card"><div class="label">آخر انصراف</div><div class="value" id="lastOut">—</div></div>
+    </div>
+
+    <div class="card" id="summaryCard" style="display:none;background:#f0f9ff;border:1px solid #bae6fd">
+      <h2 style="color:#0369a1;font-size:14px;margin-bottom:10px">📊 ملخص اليوم (8:30 ص - 4:30 م)</h2>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #bae6fd"><span>التأخير:</span><strong id="summaryLate" style="color:var(--danger)">—</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #bae6fd"><span>الخروج المبكر:</span><strong id="summaryEarly" style="color:var(--warning)">—</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0"><span>ساعات إضافية:</span><strong id="summaryOvertime" style="color:var(--success)">—</strong></div>
+    </div>
+
+    <div class="geo-box">
+      <div class="geo-dot" id="geoDot"></div>
+      <div style="flex:1">
+        <div id="geoText" style="font-weight:600">جاري تحديد الموقع...</div>
+        <div id="geoSub" style="font-size:11px;color:var(--muted)"></div>
+      </div>
+      <button id="retryGeo" class="btn btn-ghost">🔄</button>
+    </div>
+
+    <div class="actions">
+      <button id="checkInBtn" class="btn btn-success btn-lg" disabled><span class="icon">✅</span><span>تسجيل الحضور</span></button>
+      <button id="checkOutBtn" class="btn btn-danger btn-lg" disabled><span class="icon">🚪</span><span>تسجيل الانصراف</span></button>
+    </div>
+
+    <div class="card">
+      <h2>📋 سجل اليوم</h2>
+      <div id="recordsList" class="records-list"><p class="empty">لا توجد سجلات بعد</p></div>
+    </div>
+    <div class="footer-link"><a href="admin-demo.html" target="_blank">🎯 فتح لوحة الشركة ←</a></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, set, query, orderByChild, equalTo, onValue, onDisconnect, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDDHwYOfLPK1MLdzZwgukCpxFvaxwnHjLs",
+  authDomain: "bloom-store-28c12.firebaseapp.com",
+  databaseURL: "https://bloom-store-28c12-default-rtdb.firebaseio.com",
+  projectId: "bloom-store-28c12",
+  storageBucket: "bloom-store-28c12.firebasestorage.app",
+  messagingSenderId: "482044642196",
+  appId: "1:482044642196:web:37858a63194372ed59c581"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+const WORK_START_HOUR = 8, WORK_START_MIN = 30;
+const WORK_END_HOUR = 16, WORK_END_MIN = 30;
+
+let CURRENT_EMPLOYEE = null;
+let position = null;
+let todayRecords = [];
+let unsubRecords = null;
+let submitting = false;
+let connected = false;
+let heartbeatInterval = null;
+
+const $ = (id) => document.getElementById(id);
+const pad = (n) => String(n).padStart(2, '0');
+const fmt12Time = (ts) => { if (!ts) return '—'; const d = new Date(ts); let h = d.getHours(); const m = pad(d.getMinutes()); const ampm = h >= 12 ? 'م' : 'ص'; h = h % 12 || 12; return `${h}:${m} ${ampm}`; };
+const todayKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+
+function formatDuration(mins) { if (!mins || mins <= 0) return '—'; const h = Math.floor(mins / 60); const m = mins % 60; let str = ''; if (h > 0) str += `${h} ساعة`; if (m > 0) str += `${str ? ' و ' : ''}${m} دقيقة`; return str; }
+function showToast(msg, type='info') { const t = $('toast'); t.textContent = msg; t.className = `toast show ${type}`; clearTimeout(t._tid); t._tid = setTimeout(() => t.className = 'toast', 3500); }
+
+$('showRegister').addEventListener('click', (e) => { e.preventDefault(); $('loginScreen').classList.add('hidden'); $('registerScreen').classList.remove('hidden'); });
+$('showLogin').addEventListener('click', (e) => { e.preventDefault(); $('registerScreen').classList.add('hidden'); $('loginScreen').classList.remove('hidden'); });
+
+// إنشاء حساب
+$('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = $('regName').value.trim();
+  const dept = $('regDept').value.trim();
+  const job = $('regJob').value.trim();
+  const phone = $('regPhone').value.trim();
+  const pass = $('regPassword').value;
+  const err = $('regError'); err.style.display = 'none';
+
+  if (pass.length < 6) { err.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; err.style.display = 'block'; return; }
+
+  try {
+    const empRef = ref(db, `employees/${phone}`);
+    const snap = await get(empRef);
+    if (snap.exists()) { err.textContent = '❌ هذا الرقم مسجل بالفعل.'; err.style.display = 'block'; return; }
+
+    // الحفظ باستخدام رقم الموبايل كـ ID
+    await set(empRef, { id: phone, fullName: name, phone: phone, password: pass, department: dept, jobTitle: job, createdAt: Date.now() });
+    showToast('✅ تم إنشاء الحساب بنجاح', 'success');
+    $('registerScreen').classList.add('hidden');
+    $('loginScreen').classList.remove('hidden');
+    $('loginPhone').value = phone;
+    $('registerForm').reset();
+  } catch (error) { err.textContent = 'فشل إنشاء الحساب: ' + error.message; err.style.display = 'block'; }
+});
+
+// تسجيل الدخول
+$('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const phone = $('loginPhone').value.trim();
+  const pass = $('loginPassword').value;
+  const err = $('loginError'); err.style.display = 'none';
+
+  try {
+    const snap = await get(ref(db, `employees/${phone}`));
+    if (!snap.exists()) { err.textContent = '❌ هذا الرقم غير مسجل.'; err.style.display = 'block'; return; }
+    const emp = snap.val();
+    if (emp.password !== pass) { err.textContent = '❌ كلمة المرور غير صحيحة.'; err.style.display = 'block'; return; }
+
+    localStorage.setItem('emp_session', JSON.stringify({ id: emp.id }));
+    startApp(emp);
+  } catch (error) { err.textContent = 'خطأ في الاتصال.'; err.style.display = 'block'; }
+});
+
+$('logoutBtn').addEventListener('click', () => {
+  if (!confirm('هل تريد تسجيل الخروج؟')) return;
+  unregisterPresence();
+  localStorage.removeItem('emp_session');
+  CURRENT_EMPLOYEE = null; position = null; todayRecords = [];
+  if (unsubRecords) { unsubRecords(); unsubRecords = null; }
+  $('appScreen').classList.add('hidden'); $('loginScreen').classList.remove('hidden'); $('loginForm').reset();
+});
+
+window.addEventListener('beforeunload', () => { unregisterPresence(); });
+
+function registerPresence(employee) {
+  const pRef = ref(db, `activeEmployees/${employee.id}`);
+  set(pRef, { id: employee.id, name: employee.fullName, phone: employee.phone, department: employee.department, jobTitle: employee.jobTitle, loginTime: Date.now(), lastActive: Date.now() });
+  onDisconnect(pRef).remove();
+  if (heartbeatInterval) clearInterval(heartbeatInterval);
+  heartbeatInterval = setInterval(() => { set(ref(db, `activeEmployees/${employee.id}/lastActive`), Date.now()).catch(()=>{}); }, 30000);
+}
+function unregisterPresence() { if (CURRENT_EMPLOYEE) remove(ref(db, `activeEmployees/${CURRENT_EMPLOYEE.id}`)).catch(()=>{}); if (heartbeatInterval) clearInterval(heartbeatInterval); }
+
+function startApp(employee) {
+  CURRENT_EMPLOYEE = employee;
+  $('loginScreen').classList.add('hidden'); $('registerScreen').classList.add('hidden');
+  $('appScreen').classList.remove('hidden');
+  registerPresence(employee);
+  $('empName').textContent = employee.fullName;
+  $('empMeta').textContent = `${employee.jobTitle} • ${employee.department}`;
+  $('avatar').textContent = employee.fullName.charAt(0);
+
+  onValue(ref(db, '.info/connected'), (snap) => {
+    connected = snap.val() === true;
+    const banner = $('connBanner'), status = $('connStatus');
+    if (connected) { banner.classList.remove('err'); banner.style.background = '#d1fae5'; banner.style.color = '#065f46'; status.textContent = '✅ متصل'; }
+    else { banner.classList.add('err'); banner.style.background = '#fee2e2'; banner.style.color = '#991b1b'; status.textContent = '⚠️ غير متصل'; }
+  });
+
+  subscribeTodayRecords();
+  initGeolocation();
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const session = JSON.parse(localStorage.getItem('emp_session') || 'null');
+  if (session) {
+    const snap = await get(ref(db, `employees/${session.id}`));
+    if (snap.exists()) startApp(snap.val());
+  }
+});
+
+function subscribeTodayRecords() {
+  if (unsubRecords) unsubRecords();
+  const q = query(ref(db, 'attendanceRecords'), orderByChild('employeeId_dateKey'), equalTo(`${CURRENT_EMPLOYEE.id}_${todayKey()}`));
+  unsubRecords = onValue(q, (snap) => {
+    todayRecords = [];
+    snap.forEach((c) => todayRecords.push({ id: c.key, ...c.val() }));
+    todayRecords.sort((a,b) => a.serverTimestamp - b.serverTimestamp);
+    renderState();
+  });
+}
+
+function renderState() {
+  const last = todayRecords[todayRecords.length - 1];
+  const state = !last ? 'none' : (last.type === 'check_in' ? 'in' : 'out');
+  const badge = $('stateBadge'), inBtn = $('checkInBtn'), outBtn = $('checkOutBtn');
+  const lastIn = [...todayRecords].reverse().find(r => r.type === 'check_in');
+  const lastOut = [...todayRecords].reverse().find(r => r.type === 'check_out');
+
+  $('lastIn').textContent = lastIn ? fmt12Time(lastIn.serverTimestamp) : '—';
+  $('lastOut').textContent = lastOut ? fmt12Time(lastOut.serverTimestamp) : '—';
+
+  if (state === 'none') { badge.className = 'state-badge none'; badge.textContent = '🕐 لم تسجل حضورك اليوم'; }
+  else if (state === 'in') { badge.className = 'state-badge in'; badge.textContent = `✅ أنت في العمل منذ ${fmt12Time(last.serverTimestamp)}`; }
+  else { badge.className = 'state-badge out'; badge.textContent = `🚪 انصراف الساعة ${fmt12Time(last.serverTimestamp)}`; }
+
+  if (lastIn) {
+    $('summaryCard').style.display = 'block';
+    $('summaryLate').textContent = lastIn.lateMinutes > 0 ? formatDuration(lastIn.lateMinutes) : '✅ في الموعد';
+    if (lastOut) {
+      $('summaryEarly').textContent = lastOut.earlyLeaveMinutes > 0 ? formatDuration(lastOut.earlyLeaveMinutes) : '✅ خروج كامل';
+      $('summaryOvertime').textContent = lastOut.overtimeMinutes > 0 ? formatDuration(lastOut.overtimeMinutes) : '—';
+    } else { $('summaryEarly').textContent = '—'; $('summaryOvertime').textContent = '—'; }
+  } else { $('summaryCard').style.display = 'none'; }
+
+  inBtn.classList.toggle('hidden', state !== 'none');
+  outBtn.classList.toggle('hidden', state !== 'in');
+  inBtn.disabled = !position || submitting;
+  outBtn.disabled = !position || submitting;
+
+  const list = $('recordsList');
+  if (!todayRecords.length) { list.innerHTML = '<p class="empty">لا توجد سجلات اليوم</p>'; }
+  else {
+    list.innerHTML = todayRecords.map(r => {
+      const isIn = r.type === 'check_in';
+      let extra = '';
+      if (isIn && r.lateMinutes > 0) extra = `⏱️ تأخير: ${formatDuration(r.lateMinutes)}`;
+      if (!isIn && r.earlyLeaveMinutes > 0) extra += ` خروج مبكر: ${formatDuration(r.earlyLeaveMinutes)}`;
+      if (!isIn && r.overtimeMinutes > 0) extra += ` 🌟 إضافي: ${formatDuration(r.overtimeMinutes)}`;
+      return `<div class="record-item ${isIn ? 'in' : 'out'}"><div class="record-icon">${isIn ? '🟢' : '🔴'}</div><div class="record-body"><div class="record-title">${isIn ? 'حضور' : 'انصراف'}</div>${extra ? `<div class="record-extra">${extra}</div>` : ''}</div><div class="record-time">${fmt12Time(r.serverTimestamp)}</div></div>`;
+    }).join('');
+  }
+}
+
+function initGeolocation() {
+  const dot = $('geoDot'), txt = $('geoText'), sub = $('geoSub');
+  if (!navigator.geolocation) { dot.className = 'geo-dot err'; txt.textContent = 'خدمة الموقع غير مدعومة'; return; }
+  dot.className = 'geo-dot loading'; txt.textContent = 'جاري تحديد موقعك...';
+  navigator.geolocation.getCurrentPosition(
+    (pos) => { position = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }; dot.className = 'geo-dot ok'; txt.textContent = 'تم تحديد موقعك'; sub.textContent = `دقة ±${Math.round(position.accuracy)}م`; renderState(); },
+    (err) => { dot.className = 'geo-dot err'; txt.textContent = 'رفضت إذن الموقع — يجب السماح للتسجيل'; sub.textContent = 'اضغط 🔄 لإعادة المحاولة'; position = null; renderState(); },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+async function submitAttendance(type) {
+  if (submitting || !position || !connected) return;
+  submitting = true;
+  const btn = type === 'check_in' ? $('checkInBtn') : $('checkOutBtn'); btn.disabled = true;
+
+  try {
+    const dateKey = todayKey();
+    const recordId = push(ref(db, 'attendanceRecords')).key;
+    const now = Date.now();
+    let lateMinutes = 0, earlyLeaveMinutes = 0, overtimeMinutes = 0;
+    const ws = new Date(now); ws.setHours(WORK_START_HOUR, WORK_START_MIN, 0, 0);
+    const we = new Date(now); we.setHours(WORK_END_HOUR, WORK_END_MIN, 0, 0);
+
+    if (type === 'check_in') { if (now > ws.getTime()) lateMinutes = Math.floor((now - ws.getTime()) / 60000); }
+    else { if (now < we.getTime()) earlyLeaveMinutes = Math.floor((we.getTime() - now) / 60000); else if (now > we.getTime()) overtimeMinutes = Math.floor((now - we.getTime()) / 60000); }
+
+    const record = {
+      employeeId: CURRENT_EMPLOYEE.id, // هنا الربط برقم الموبايل
+      employeeName: CURRENT_EMPLOYEE.fullName, 
+      employeeNumber: CURRENT_EMPLOYEE.phone,
+      department: CURRENT_EMPLOYEE.department, 
+      jobTitle: CURRENT_EMPLOYEE.jobTitle, 
+      phone: CURRENT_EMPLOYEE.phone,
+      type, serverTimestamp: now, dateKey, employeeId_dateKey: `${CURRENT_EMPLOYEE.id}_${dateKey}`,
+      latitude: position.lat, longitude: position.lng, accuracyMeters: Math.round(position.accuracy),
+      mapsLink: `https://www.google.com/maps?q=${position.lat},${position.lng}`,
+      lateMinutes, earlyLeaveMinutes, overtimeMinutes
+    };
+
+    await set(ref(db, `attendanceRecords/${recordId}`), record);
+    if (type === 'check_in') showToast('✅ تم تسجيل الحضور', 'success');
+    else showToast('✅ تم تسجيل الانصراف', 'success');
+  } catch (err) { showToast('فشل التسجيل: ' + err.message, 'error'); }
+  finally { submitting = false; renderState(); }
+}
+
+$('checkInBtn').addEventListener('click', () => submitAttendance('check_in'));
+$('checkOutBtn').addEventListener('click', () => submitAttendance('check_out'));
+$('retryGeo').addEventListener('click', () => { position = null; renderState(); initGeolocation(); });
+</script>
+</body>
+</html>
